@@ -488,6 +488,28 @@ export function renderThoughts({ preserveScroll = false, useCommittedFallback = 
 
     $thoughtsContainer.html(html);
 
+    // Make the Present Characters cards consume the available panel space.
+    // One character gets all available space; multiple characters split it evenly.
+    const thoughtsContent = $thoughtsContainer.find('.rpg-thoughts-content')[0];
+    if (thoughtsContent && presentCharacters.length > 0) {
+        thoughtsContent.style.display = 'grid';
+        thoughtsContent.style.gridTemplateRows = `repeat(${presentCharacters.length}, minmax(0, 1fr)) auto`;
+        thoughtsContent.style.flex = '1 1 0';
+        thoughtsContent.style.minHeight = '0';
+        thoughtsContent.style.height = '100%';
+
+        $thoughtsContainer.find('.rpg-character-card').each(function () {
+            this.style.minHeight = '0';
+            this.style.maxHeight = 'none';
+            this.style.overflow = 'auto';
+        });
+
+        const addCharacterButton = thoughtsContent.querySelector('.rpg-add-character-btn');
+        if (addCharacterButton) {
+            addCharacterButton.style.flex = '0 0 auto';
+        }
+    }
+
     debugLog('[RPG Thoughts] ✓ HTML rendered to container');
     debugLog('[RPG Thoughts] =======================================================');
 
