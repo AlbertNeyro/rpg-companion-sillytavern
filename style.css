@@ -2126,10 +2126,12 @@ body:has(.rpg-panel.rpg-position-left) #sheld {
     border-radius: clamp(4px, 0.5vh, 6px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.2s ease;
-    width: 100%; /* Ensure cards take full width */
-    max-height: clamp(200px, 18vh, 250px);
-    box-sizing: border-box; /* Include padding and border in width calculation */
-    flex-shrink: 0; /* Prevent cards from shrinking */
+    width: 100%;
+    box-sizing: border-box;
+    /* Fill the available Present Characters space. Multiple cards share it equally. */
+    flex: 1 1 0;
+    min-height: 0;
+    max-height: none;
     overflow: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--rpg-border) transparent;
