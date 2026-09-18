@@ -92,6 +92,11 @@ function getStatColor(percentage, lowColor, highColor, lowOpacity = 100, highOpa
  * Includes event listeners for editable character fields.
  */
 export function renderThoughts({ preserveScroll = false, useCommittedFallback = true } = {}) {
+    // Apply the configured Present Characters size before rendering or early returns.
+    const presentCharactersSize = Math.min(5, Math.max(1, Number(extensionSettings.trackerConfig?.presentCharacters?.size) || 1));
+    document.documentElement.style.setProperty('--rpg-present-characters-flex', String(presentCharactersSize));
+    document.documentElement.style.setProperty('--rpg-present-characters-row', presentCharactersSize + 'fr');
+
     renderAlternatePresentCharacters({ useCommittedFallback });
     queueThoughtBasedExpressionsUpdate();
 
