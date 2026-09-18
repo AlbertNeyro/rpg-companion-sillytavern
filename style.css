@@ -11928,3 +11928,29 @@ body.documentstyle .rpg-inline-thoughts {
 .rpg-item-qty-edit:focus {
     outline: 1px solid var(--SmartThemeQuoteColor, #e94560);
 }
+
+
+/* Configurable vertical sizing for Info Box and Present Characters. */
+.rpg-content-box > #rpg-info-box {
+    flex: var(--rpg-info-box-flex, 1) 1 0 !important;
+    min-height: 0;
+}
+
+.rpg-content-box > #rpg-thoughts {
+    flex: var(--rpg-present-characters-flex, 1) 1 0 !important;
+    min-height: 0;
+}
+
+@media (max-width: 768px) {
+    .rpg-mobile-tab-content[data-tab-content="info"].active {
+        grid-template-rows:
+            minmax(0, var(--rpg-info-box-row, 1fr))
+            minmax(0, var(--rpg-present-characters-row, 1fr));
+        overflow-y: hidden;
+    }
+
+    .rpg-mobile-tab-content[data-tab-content="info"] > #rpg-info-box,
+    .rpg-mobile-tab-content[data-tab-content="info"] > #rpg-thoughts {
+        flex: 1 1 auto !important;
+    }
+}
