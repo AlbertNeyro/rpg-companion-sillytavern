@@ -328,6 +328,10 @@ export function renderInfoBox() {
 
     // Get tracker configuration
     const config = extensionSettings.trackerConfig?.infoBox;
+    const infoBoxSize = Math.min(5, Math.max(1, Number(config?.size) || 1));
+    // Keep the desktop flex sizing and mobile grid sizing in sync.
+    document.documentElement.style.setProperty('--rpg-info-box-flex', String(infoBoxSize));
+    document.documentElement.style.setProperty('--rpg-info-box-row', infoBoxSize + 'fr');
 
     // Build visual dashboard HTML
     // Wrap all content in a scrollable container
