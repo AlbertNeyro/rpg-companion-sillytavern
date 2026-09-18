@@ -548,7 +548,6 @@ function migrateTrackerPreset(config) {
             migrated.presentCharacters.characterStats.customStats = migrated.presentCharacters.characterStats.customStats.map(stat => ({
                 ...stat,
                 displayMode: stat.displayMode === 'text' ? 'text' : 'percentage',
-                maxValue: Math.max(1, Number(stat.maxValue) || 100),
                 colorLow: stat.colorLow || '#ff4444',
                 colorHigh: stat.colorHigh || '#44ff44'
             }));
@@ -1283,7 +1282,6 @@ function renderPresentCharactersTab() {
                     <option value="percentage" ${(stat.displayMode || 'percentage') === 'percentage' ? 'selected' : ''}>Percentage</option>
                     <option value="text" ${stat.displayMode === 'text' ? 'selected' : ''}>Text</option>
                 </select>
-                <input type="number" class="rpg-char-stat-max" data-index="${index}" value="${stat.maxValue || 100}" min="1" step="1" title="Maximum value (percentage mode)">
                 <input type="color" class="rpg-char-stat-low" data-index="${index}" value="${stat.colorLow || '#ff4444'}" title="Low value color">
                 <input type="color" class="rpg-char-stat-high" data-index="${index}" value="${stat.colorHigh || '#44ff44'}" title="High value color">
                 <button class="rpg-field-remove rpg-char-stat-remove" data-index="${index}" title="Remove stat"><i class="fa-solid fa-trash"></i></button>
@@ -1537,7 +1535,6 @@ function setupPresentCharactersListeners() {
             name: 'New Stat',
             enabled: true,
             displayMode: 'percentage',
-            maxValue: 100,
             colorLow: '#ff4444',
             colorHigh: '#44ff44'
         });
@@ -1563,13 +1560,6 @@ function setupPresentCharactersListeners() {
         const stat = extensionSettings.trackerConfig.presentCharacters.characterStats.customStats[index];
         stat.displayMode = $(this).val();
         renderPresentCharactersTab();
-    });
-
-    // Character stat maximum
-    $('.rpg-char-stat-max').off('change blur').on('change blur', function () {
-        const index = $(this).data('index');
-        const value = Math.max(1, parseInt($(this).val(), 10) || 100);
-        extensionSettings.trackerConfig.presentCharacters.characterStats.customStats[index].maxValue = value;
     });
 
     // Character stat colors
