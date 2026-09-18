@@ -11961,3 +11961,41 @@ body.documentstyle .rpg-inline-thoughts {
         flex: 1 1 auto !important;
     }
 }
+
+
+/* Character stat editor controls */
+#rpg-char-stats-list .rpg-editor-field-item {
+    grid-template-columns: auto minmax(100px, 1fr) minmax(100px, auto) 80px 34px 34px auto;
+}
+
+#rpg-char-stats-list .rpg-char-stat-display-mode,
+#rpg-char-stats-list .rpg-char-stat-max {
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+#rpg-char-stats-list .rpg-char-stat-max {
+    width: 80px;
+}
+
+#rpg-char-stats-list .rpg-char-stat-low,
+#rpg-char-stats-list .rpg-char-stat-high {
+    width: 30px;
+    height: 30px;
+    padding: 2px;
+    cursor: pointer;
+}
+
+@media (max-width: 600px) {
+    #rpg-char-stats-list .rpg-editor-field-item {
+        grid-template-columns: auto 1fr auto;
+    }
+
+    #rpg-char-stats-list .rpg-char-stat-label {
+        min-width: 0;
+    }
+
+    #rpg-char-stats-list .rpg-char-stat-display-mode {
+        grid-column: 2 / 3;
+    }
+}
