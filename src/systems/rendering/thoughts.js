@@ -458,8 +458,8 @@ export function renderThoughts({ preserveScroll = false, useCommittedFallback = 
                         const statColor = displayMode === 'percentage'
                             ? getStatColor(
                                 percentage,
-                                stat.colorLow || extensionSettings.statBarColorLow,
-                                stat.colorHigh || extensionSettings.statBarColorHigh,
+                                extensionSettings.statBarColorLow,
+                                extensionSettings.statBarColorHigh,
                                 extensionSettings.statBarColorLowOpacity ?? 100,
                                 extensionSettings.statBarColorHighOpacity ?? 100
                             )
