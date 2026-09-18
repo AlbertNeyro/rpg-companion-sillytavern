@@ -396,6 +396,7 @@ function resetToDefaults() {
             questsPersistInHistory: false
         },
         infoBox: {
+            size: 1,
             widgets: {
                 date: { enabled: true, format: 'Weekday, Month, Year', persistInHistory: true },
                 weather: { enabled: true, persistInHistory: true },
@@ -406,6 +407,7 @@ function resetToDefaults() {
             }
         },
         presentCharacters: {
+            size: 1,
             showEmoji: true,
             showName: true,
             relationships: {
@@ -511,6 +513,11 @@ function migrateTrackerPreset(config) {
 
     // Migrate relationships structure (v3.0.0 -> v3.1.0)
     if (migrated.presentCharacters) {
+        // Panel sizing was introduced after older presets.
+        if (migrated.presentCharacters.size === undefined) {
+            migrated.presentCharacters.size = 1;
+        }
+
         // Old format: relationshipEmojis directly on presentCharacters
         // New format: relationships.relationshipEmojis
         if (migrated.presentCharacters.relationshipEmojis &&
@@ -585,6 +592,11 @@ function migrateTrackerPreset(config) {
         if (migrated.userStats.questsPersistInHistory === undefined) {
             migrated.userStats.questsPersistInHistory = false;
         }
+    }
+
+    // Add panel sizing to older presets.
+    if (migrated.infoBox && migrated.infoBox.size === undefined) {
+        migrated.infoBox.size = 1;
     }
 
     // Add persistInHistory to infoBox widgets if missing (v3.4.0)
@@ -1104,6 +1116,8 @@ function setupInfoBoxListeners() {
     $('#rpg-info-box-size').off('input change').on('input change', function () {
         const value = Math.min(5, Math.max(1, Number($(this).val()) || 1));
         infoBoxConfig.size = value;
+        document.documentElement.style.setProperty('--rpg-info-box-flex', String(value));
+        document.documentElement.style.setProperty('--rpg-info-box-row', value + 'fr');
         $('#rpg-info-box-size-value').text(value);
     });
 
@@ -1272,6 +1286,8 @@ function setupPresentCharactersListeners() {
     $('#rpg-present-characters-size').off('input change').on('input change', function () {
         const value = Math.min(5, Math.max(1, Number($(this).val()) || 1));
         presentCharactersConfig.size = value;
+        document.documentElement.style.setProperty('--rpg-present-characters-flex', String(value));
+        document.documentElement.style.setProperty('--rpg-present-characters-row', value + 'fr');
         $('#rpg-present-characters-size-value').text(value);
     });
 
