@@ -2404,14 +2404,15 @@ body:has(.rpg-panel.rpg-position-left) #sheld {
 /* Character stats display */
 .rpg-character-stats {
     width: 100%;
-    max-height: clamp(50px, 7vh, 70px);
+    /* Stats must grow with the character card instead of being capped at ~70px. */
+    max-height: none;
     margin-top: clamp(3px, 0.5vh, 5px);
     padding: clamp(3px, 0.4vh, 5px) clamp(4px, 0.5vw, 6px);
     background: var(--rpg-bg);
     border: 1px solid var(--rpg-border);
     border-radius: clamp(2px, 0.3vh, 4px);
     box-sizing: border-box;
-    overflow: auto;
+    overflow: visible;
     scrollbar-width: thin;
     scrollbar-color: var(--rpg-border) transparent;
 }
