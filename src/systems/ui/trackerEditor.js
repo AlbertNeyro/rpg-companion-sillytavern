@@ -548,8 +548,6 @@ function migrateTrackerPreset(config) {
             migrated.presentCharacters.characterStats.customStats = migrated.presentCharacters.characterStats.customStats.map(stat => ({
                 ...stat,
                 displayMode: stat.displayMode === 'text' ? 'text' : 'percentage',
-                colorLow: stat.colorLow || '#ff4444',
-                colorHigh: stat.colorHigh || '#44ff44'
             }));
         }
 
@@ -1064,6 +1062,16 @@ function renderInfoBoxTab() {
     html += '<small class="rpg-editor-note">Controls the relative vertical space used by the Info Box. Higher values make it larger.</small>';
     html += '</div>';
 
+    html += '<div class="rpg-editor-option-grid">';
+    html += '<div class="rpg-editor-input-group"><label for="rpg-info-box-layout"><i class="fa-solid fa-table-cells"></i> Widget Layout</label>';
+    html += '<select id="rpg-info-box-layout" class="rpg-select-mini"><option value="auto" ' + ((config.layout || 'auto') === 'auto' ? 'selected' : '') + '>Automatic</option><option value="2" ' + (String(config.layout) === '2' ? 'selected' : '') + '>2 columns</option><option value="4" ' + (String(config.layout) === '4' ? 'selected' : '') + '>4 columns</option></select></div>';
+    html += '<div class="rpg-editor-input-group"><label for="rpg-info-box-density"><i class="fa-solid fa-arrows-up-down"></i> Widget Density</label>';
+    html += '<select id="rpg-info-box-density" class="rpg-select-mini"><option value="comfortable" ' + ((config.density || 'comfortable') === 'comfortable' ? 'selected' : '') + '>Comfortable</option><option value="compact" ' + (config.density === 'compact' ? 'selected' : '') + '>Compact</option></select></div>';
+    html += '<div class="rpg-editor-input-group"><label for="rpg-info-box-events-limit"><i class="fa-solid fa-list"></i> Recent Events</label>';
+    html += '<select id="rpg-info-box-events-limit" class="rpg-select-mini">';
+    for (let count = 1; count <= 5; count++) html += '<option value="' + count + '" ' + (Number(config.recentEventsLimit || 3) === count ? 'selected' : '') + '>' + count + ' event' + (count === 1 ? '' : 's') + '</option>';
+    html += '</select></div></div>';
+
     html += `<h4><i class="fa-solid fa-info-circle"></i> ${i18n.getTranslation('template.trackerEditorModal.infoBoxTab.widgetsTitle')}</h4>`;
 
     // Date widget
@@ -1135,6 +1143,10 @@ function setupInfoBoxListeners() {
         saveSettings();
         $('#rpg-info-box-size-value').text(value);
     });
+
+    $('#rpg-info-box-layout').off('change').on('change', function () { infoBoxConfig.layout = $(this).val(); renderInfoBox(); saveSettings(); });
+    $('#rpg-info-box-density').off('change').on('change', function () { infoBoxConfig.density = $(this).val(); renderInfoBox(); saveSettings(); });
+    $('#rpg-info-box-events-limit').off('change').on('change', function () { infoBoxConfig.recentEventsLimit = Math.max(1, Math.min(5, Number($(this).val()) || 3)); renderInfoBox(); saveSettings(); });
 
     $('#rpg-widget-date').off('change').on('change', function () {
         widgets.date.enabled = $(this).is(':checked');
@@ -1282,8 +1294,7 @@ function renderPresentCharactersTab() {
                     <option value="percentage" ${(stat.displayMode || 'percentage') === 'percentage' ? 'selected' : ''}>Percentage</option>
                     <option value="text" ${stat.displayMode === 'text' ? 'selected' : ''}>Text</option>
                 </select>
-                <input type="color" class="rpg-char-stat-low" data-index="${index}" value="${stat.colorLow || '#ff4444'}" title="Low value color">
-                <input type="color" class="rpg-char-stat-high" data-index="${index}" value="${stat.colorHigh || '#44ff44'}" title="High value color">
+                <input type="text" class="rpg-char-stat-prompt" data-index="${index}" value="${(stat.prompt || '').replace(/"/g, '&quot;')}" placeholder="AI instruction for text value" title="Instruction used when generating this text stat">
                 <button class="rpg-field-remove rpg-char-stat-remove" data-index="${index}" title="Remove stat"><i class="fa-solid fa-trash"></i></button>
             </div>
         `;
@@ -1535,8 +1546,6 @@ function setupPresentCharactersListeners() {
             name: 'New Stat',
             enabled: true,
             displayMode: 'percentage',
-            colorLow: '#ff4444',
-            colorHigh: '#44ff44'
         });
         renderPresentCharactersTab();
     });
@@ -1554,22 +1563,16 @@ function setupPresentCharactersListeners() {
         extensionSettings.trackerConfig.presentCharacters.characterStats.customStats[index].enabled = $(this).is(':checked');
     });
 
+    $('#rpg-char-stat-color-low').off('change').on('change', function () { extensionSettings.statBarColorLow = $(this).val(); renderThoughts(); saveSettings(); });
+    $('#rpg-char-stat-color-high').off('change').on('change', function () { extensionSettings.statBarColorHigh = $(this).val(); renderThoughts(); saveSettings(); });
+    $('.rpg-char-stat-prompt').off('blur change').on('blur change', function () { const index = $(this).data('index'); extensionSettings.trackerConfig.presentCharacters.characterStats.customStats[index].prompt = $(this).val().trim(); saveSettings(); });
+
     // Character stat display mode
     $('.rpg-char-stat-display-mode').off('change').on('change', function () {
         const index = $(this).data('index');
         const stat = extensionSettings.trackerConfig.presentCharacters.characterStats.customStats[index];
         stat.displayMode = $(this).val();
         renderPresentCharactersTab();
-    });
-
-    // Character stat colors
-    $('.rpg-char-stat-low').off('change').on('change', function () {
-        const index = $(this).data('index');
-        extensionSettings.trackerConfig.presentCharacters.characterStats.customStats[index].colorLow = $(this).val();
-    });
-    $('.rpg-char-stat-high').off('change').on('change', function () {
-        const index = $(this).data('index');
-        extensionSettings.trackerConfig.presentCharacters.characterStats.customStats[index].colorHigh = $(this).val();
     });
 
     // Rename character stat
