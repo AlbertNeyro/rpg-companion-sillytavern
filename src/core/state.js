@@ -52,6 +52,13 @@ export let extensionSettings = {
     showCYOAToggle: true, // Show CYOA toggle in main panel
     showSpotifyToggle: true, // Show Spotify Music toggle in main panel
 
+    // Test-only floating image HUD; never included in generation prompts.
+    testImageHud: {
+        enabled: false,
+        url: '',
+        size: 3
+    },
+
     showDynamicWeatherToggle: true, // Show Dynamic Weather Effects toggle in main panel
     showNarratorMode: true, // Show Narrator Mode toggle in main panel
     showAutoAvatars: true, // Show Auto-generate Avatars toggle in main panel
