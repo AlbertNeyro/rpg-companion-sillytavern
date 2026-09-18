@@ -11965,17 +11965,13 @@ body.documentstyle .rpg-inline-thoughts {
 
 /* Character stat editor controls */
 #rpg-char-stats-list .rpg-editor-field-item {
-    grid-template-columns: auto minmax(100px, 1fr) minmax(100px, auto) 80px 34px 34px auto;
+    grid-template-columns: auto minmax(100px, 1fr) minmax(100px, auto) 34px 34px auto;
 }
 
 #rpg-char-stats-list .rpg-char-stat-display-mode,
 #rpg-char-stats-list .rpg-char-stat-max {
     min-width: 0;
     box-sizing: border-box;
-}
-
-#rpg-char-stats-list .rpg-char-stat-max {
-    width: 80px;
 }
 
 #rpg-char-stats-list .rpg-char-stat-low,
