@@ -72,6 +72,7 @@ import { renderInventory } from './src/systems/rendering/inventory.js';
 import { renderQuests } from './src/systems/rendering/quests.js';
 import { renderMusicPlayer } from './src/systems/rendering/musicPlayer.js';
 import { toggleSnowflakes, initSnowflakes } from './src/systems/ui/snowflakes.js';
+import { initTestImageHud, renderTestImageHud, removeTestImageHud } from './src/systems/ui/imageHud.js';
 import { toggleDynamicWeather, initWeatherEffects, updateWeatherEffect } from './src/systems/ui/weatherEffects.js';
 
 // Interaction modules
@@ -239,6 +240,7 @@ async function addExtensionSettings() {
             updateChatThoughts(); // Remove thought bubbles
             cleanupCheckpointUI(); // Remove checkpoint buttons and indicators
             clearThoughtBasedExpressionsCache();
+            removeTestImageHud();
 
             // Disable dynamic weather effects
             toggleDynamicWeather(false);
@@ -307,6 +309,9 @@ async function initUI() {
         $('#rpg-mobile-toggle').hide();
     }
 
+    // Test-only floating image HUD (not part of tracker generation).
+    initTestImageHud();
+
     // Cache UI elements using state setters
     setPanelContainer($('#rpg-companion-panel'));
     setUserStatsContainer($('#rpg-user-stats'));
@@ -331,6 +336,7 @@ async function initUI() {
         applyPanelPosition();
         // Recreate thought bubbles to update their position
         updateChatThoughts();
+        renderTestImageHud();
     });
 
     $('#rpg-update-depth').on('change', function() {
