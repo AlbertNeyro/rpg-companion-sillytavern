@@ -1294,7 +1294,7 @@ function renderPresentCharactersTab() {
                     <option value="percentage" ${(stat.displayMode || 'percentage') === 'percentage' ? 'selected' : ''}>Percentage</option>
                     <option value="text" ${stat.displayMode === 'text' ? 'selected' : ''}>Text</option>
                 </select>
-                <input type="text" class="rpg-char-stat-prompt" data-index="${index}" value="${(stat.prompt || '').replace(/"/g, '&quot;')}" placeholder="AI instruction for text value" title="Instruction used when generating this text stat">
+                <input type="text" class="rpg-char-stat-prompt ${stat.displayMode === 'text' ? '' : 'rpg-hidden'}" data-index="${index}" value="${(stat.prompt || '').replace(/"/g, '&quot;')}" placeholder="AI instruction for text value" title="Instruction used when generating this text stat">
                 <button class="rpg-field-remove rpg-char-stat-remove" data-index="${index}" title="Remove stat"><i class="fa-solid fa-trash"></i></button>
             </div>
         `;
