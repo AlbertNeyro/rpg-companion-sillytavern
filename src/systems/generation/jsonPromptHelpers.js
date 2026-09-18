@@ -223,7 +223,7 @@ export function buildCharactersJSONInstruction() {
             const stat = enabledCharStats[i];
             const comma = i < enabledCharStats.length - 1 ? ',' : '';
             if (stat.displayMode === 'text') {
-                instruction += `      {"name": "${stat.name}", "value": "Text value"}${comma}  // descriptive text\n`;
+                instruction += `      {"name": "${stat.name}", "value": "Text value"}${comma}  // ${stat.prompt || "descriptive text"}\n`;
             } else {
                 instruction += `      {"name": "${stat.name}", "value": X}${comma}  // numeric percentage from 0 to 100\n`;
             }
