@@ -317,12 +317,19 @@ export function renderThoughts({ preserveScroll = false, useCommittedFallback = 
                 const statParts = statsContent.split('|').map(p => p.trim());
 
                 for (const statPart of statParts) {
-                    const statMatch = statPart.match(/^(.+?):\s*(\d+)%$/);
+                    const statMatch = statPart.match(/^(.+?):\s*(.+)$/);
                     if (statMatch) {
                         const statName = statMatch[1].trim();
-                        const statValue = parseInt(statMatch[2]);
-                        currentCharacter[statName] = statValue;
-                        debugLog(`[RPG Thoughts] Parsed stat: ${statName} = ${statValue}%`);
+                        const configuredStat = enabledCharStats.find(s => s.name === statName);
+                        const rawValue = statMatch[2].trim();
+                        if (configuredStat?.displayMode === 'text') {
+                            currentCharacter[statName] = rawValue.replace(/%$/, '').trim();
+                            debugLog(`[RPG Thoughts] Parsed text stat: ${statName} = ${currentCharacter[statName]}`);
+                        } else {
+                            const statValue = parseFloat(rawValue.replace('%', '').trim());
+                            currentCharacter[statName] = Number.isFinite(statValue) ? statValue : 0;
+                            debugLog(`[RPG Thoughts] Parsed percentage stat: ${statName} = ${currentCharacter[statName]}`);
+                        }
                     }
                 }
             }
@@ -441,17 +448,28 @@ export function renderThoughts({ preserveScroll = false, useCommittedFallback = 
                         <span class="rpg-section-lock-icon" style="position: absolute; top: 4px; right: 4px; font-size: 1rem; z-index: 10; opacity: 0.7; pointer-events: auto;">${lockIconHtml}</span>
                         <div class="rpg-character-stats-inner">`;
                     for (const stat of enabledCharStats) {
-                        const statValue = char[stat.name] || 0;
-                        const statColor = getStatColor(
-                            statValue,
-                            extensionSettings.statBarColorLow,
-                            extensionSettings.statBarColorHigh,
-                            extensionSettings.statBarColorLowOpacity ?? 100,
-                            extensionSettings.statBarColorHighOpacity ?? 100
-                        );
+                        const rawValue = char[stat.name] ?? '';
+                        const displayMode = stat.displayMode === 'text' ? 'text' : 'percentage';
+                        const maxValue = Math.max(1, Number(stat.maxValue) || 100);
+                        const numericValue = Number(rawValue);
+                        const percentage = Number.isFinite(numericValue)
+                            ? Math.max(0, Math.min(100, (numericValue / maxValue) * 100))
+                            : 0;
+                        const statColor = displayMode === 'percentage'
+                            ? getStatColor(
+                                percentage,
+                                stat.colorLow || extensionSettings.statBarColorLow,
+                                stat.colorHigh || extensionSettings.statBarColorHigh,
+                                extensionSettings.statBarColorLowOpacity ?? 100,
+                                extensionSettings.statBarColorHighOpacity ?? 100
+                            )
+                            : 'var(--rpg-text)';
+                        const displayValue = displayMode === 'percentage'
+                            ? (Number.isFinite(numericValue) ? numericValue : 0) + '%'
+                            : String(rawValue || '—');
                         html += `
                                 <div class="rpg-character-stat">
-                                    <span class="rpg-stat-name">${stat.name}: </span><span class="rpg-editable" contenteditable="true" data-character="${char.name}" data-field="${stat.name}" style="color: ${statColor}" title="${i18n.getTranslation('thoughts.clickToEdit') || 'Click to edit'}">${statValue}%</span>
+                                    <span class="rpg-stat-name">${stat.name}: </span><span class="rpg-editable" contenteditable="true" data-character="${char.name}" data-field="${stat.name}" style="color: ${statColor}" title="${i18n.getTranslation('thoughts.clickToEdit') || 'Click to edit'}">${displayValue}</span>
                                 </div>
                         `;
                     }
@@ -991,16 +1009,23 @@ export function updateCharacterField(characterName, field, value) {
                 // Check if it's a character stat
                 const isStatField = enabledCharStats.findIndex(s => s.name === field) !== -1;
                 if (isStatField) {
-                    let numValue = parseInt(value.replace('%', '').trim());
-                    if (isNaN(numValue)) numValue = 0;
-                    numValue = Math.max(0, Math.min(100, numValue));
+                    const statConfig = enabledCharStats.find(s => s.name === field);
+                    const isTextStat = statConfig?.displayMode === 'text';
+                    let statValue;
+                    if (isTextStat) {
+                        statValue = value.replace(/%$/, '').trim();
+                    } else {
+                        const maxValue = Math.max(1, Number(statConfig?.maxValue) || 100);
+                        const parsedValue = parseFloat(value.replace('%', '').trim());
+                        statValue = Number.isFinite(parsedValue) ? Math.max(0, Math.min(maxValue, parsedValue)) : 0;
+                    }
 
                     // Handle both array format (from LLM) and object format
                     if (Array.isArray(char.stats)) {
                         // Array format: [{name: "Health", value: 80}]
                         const statIndex = char.stats.findIndex(s => s.name === field);
                         if (statIndex !== -1) {
-                            char.stats[statIndex].value = numValue;
+                            char.stats[statIndex].value = statValue;
                         } else {
                             // Stat not found in array - add it
                             char.stats.push({ name: field, value: numValue });
@@ -1008,7 +1033,7 @@ export function updateCharacterField(characterName, field, value) {
                     } else {
                         // Object format: {Health: 80} or undefined
                         if (!char.stats) char.stats = {};
-                        char.stats[field] = numValue;
+                        char.stats[field] = statValue;
                     }
                 } else {
                     // It's a custom detail field - store in details object
