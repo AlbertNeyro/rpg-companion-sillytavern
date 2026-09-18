@@ -2,6 +2,8 @@
 
 A customizable RPG companion extension for SillyTavern that tracks player stats, scene information, inventories, present characters, relationships, and character thoughts in an interactive UI.
 
+This is an **AI-powered project**. AI tools are used during development to assist with coding, documentation, debugging, and feature implementation. The project remains community-maintained, and AI-assisted changes are reviewed and integrated into the codebase.
+
 ## Features
 
 - Player stats, skills, statuses, and attributes with live editing.
