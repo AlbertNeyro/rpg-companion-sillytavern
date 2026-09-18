@@ -11995,3 +11995,73 @@ body.documentstyle .rpg-inline-thoughts {
         grid-column: 2 / 3;
     }
 }
+
+
+/* Info Box customization
+   Keeps layout controls visual and unobtrusive while preserving the existing dashboard design. */
+.rpg-info-content[data-layout="2"] .rpg-dashboard-row-1 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
+}
+
+.rpg-info-content[data-layout="4"] .rpg-dashboard-row-1 {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    overflow: visible;
+}
+
+.rpg-info-content[data-layout="2"] .rpg-dashboard-row-1 .rpg-dashboard-widget,
+.rpg-info-content[data-layout="4"] .rpg-dashboard-row-1 .rpg-dashboard-widget {
+    width: auto;
+    min-width: 0;
+}
+
+.rpg-info-content[data-density="compact"] {
+    gap: 0.15em;
+}
+
+.rpg-info-content[data-density="compact"] .rpg-dashboard {
+    gap: 0.15em;
+}
+
+.rpg-info-content[data-density="compact"] .rpg-dashboard-widget {
+    padding: 0.15em;
+}
+
+.rpg-info-content[data-density="compact"] .rpg-notebook-lines {
+    gap: 0.05em;
+    padding: 0.15em 0.35em;
+}
+
+/* Character stat customization */
+.rpg-editor-universal-colors {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin: 0 0 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid var(--rpg-border);
+    border-radius: 0.5rem;
+    background: color-mix(in srgb, var(--rpg-bg) 75%, transparent);
+}
+
+.rpg-editor-universal-colors input[type="color"] {
+    width: 2.25rem;
+    height: 2rem;
+    padding: 0.15rem;
+}
+
+.rpg-char-stat-prompt {
+    min-width: 0;
+}
+
+@media (max-width: 600px) {
+    .rpg-editor-universal-colors {
+        grid-template-columns: 1fr;
+    }
+
+    .rpg-info-content[data-layout="4"] .rpg-dashboard-row-1 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
