@@ -12065,3 +12065,12 @@ body.documentstyle .rpg-inline-thoughts {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
+
+.rpg-char-stat-prompt {
+    min-width: 0;
+    width: 100%;
+    min-height: 2.4rem;
+    resize: vertical;
+    box-sizing: border-box;
+    font: inherit;
+}
