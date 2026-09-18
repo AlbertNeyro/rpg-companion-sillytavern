@@ -441,8 +441,8 @@ function resetToDefaults() {
             characterStats: {
                 enabled: false,
                 customStats: [
-                    { id: 'health', name: i18n.getTranslation('stats.health'), enabled: true, colorLow: '#ff4444', colorHigh: '#44ff44' },
-                    { id: 'energy', name: i18n.getTranslation('stats.energy'), enabled: true, colorLow: '#ffaa00', colorHigh: '#44ffff' }
+                    { id: 'health', name: i18n.getTranslation('stats.health'), enabled: true, displayMode: 'percentage', maxValue: 100, colorLow: '#ff4444', colorHigh: '#44ff44' },
+                    { id: 'energy', name: i18n.getTranslation('stats.energy'), enabled: true, displayMode: 'percentage', maxValue: 100, colorLow: '#ffaa00', colorHigh: '#44ffff' }
                 ]
             }
         }
@@ -541,6 +541,17 @@ function migrateTrackerPreset(config) {
         // Ensure relationshipEmojis exists within relationships
         if (!migrated.presentCharacters.relationships.relationshipEmojis) {
             migrated.presentCharacters.relationships.relationshipEmojis = {};
+        }
+
+        // Normalize character stat display settings.
+        if (migrated.presentCharacters.characterStats?.customStats) {
+            migrated.presentCharacters.characterStats.customStats = migrated.presentCharacters.characterStats.customStats.map(stat => ({
+                ...stat,
+                displayMode: stat.displayMode === 'text' ? 'text' : 'percentage',
+                maxValue: Math.max(1, Number(stat.maxValue) || 100),
+                colorLow: stat.colorLow || '#ff4444',
+                colorHigh: stat.colorHigh || '#44ff44'
+            }));
         }
 
         // Add persistInHistory to customFields if missing (v3.4.0)
@@ -1266,8 +1277,15 @@ function renderPresentCharactersTab() {
     charStats.forEach((stat, index) => {
         html += `
             <div class="rpg-editor-field-item" data-index="${index}">
-                <input type="checkbox" ${stat.enabled ? 'checked' : ''} class="rpg-char-stat-toggle" data-index="${index}">
+                <input type="checkbox" ${stat.enabled ? 'checked' : ''} class="rpg-char-stat-toggle" data-index="${index}" title="Show this stat">
                 <input type="text" value="${stat.name}" class="rpg-char-stat-label" data-index="${index}" placeholder="Stat Name (e.g., Health)">
+                <select class="rpg-char-stat-display-mode" data-index="${index}" title="How the stat is displayed">
+                    <option value="percentage" ${(stat.displayMode || 'percentage') === 'percentage' ? 'selected' : ''}>Percentage</option>
+                    <option value="text" ${stat.displayMode === 'text' ? 'selected' : ''}>Text</option>
+                </select>
+                <input type="number" class="rpg-char-stat-max" data-index="${index}" value="${stat.maxValue || 100}" min="1" step="1" title="Maximum value (percentage mode)">
+                <input type="color" class="rpg-char-stat-low" data-index="${index}" value="${stat.colorLow || '#ff4444'}" title="Low value color">
+                <input type="color" class="rpg-char-stat-high" data-index="${index}" value="${stat.colorHigh || '#44ff44'}" title="High value color">
                 <button class="rpg-field-remove rpg-char-stat-remove" data-index="${index}" title="Remove stat"><i class="fa-solid fa-trash"></i></button>
             </div>
         `;
@@ -1517,7 +1535,11 @@ function setupPresentCharactersListeners() {
         extensionSettings.trackerConfig.presentCharacters.characterStats.customStats.push({
             id: `stat-${Date.now()}`,
             name: 'New Stat',
-            enabled: true
+            enabled: true,
+            displayMode: 'percentage',
+            maxValue: 100,
+            colorLow: '#ff4444',
+            colorHigh: '#44ff44'
         });
         renderPresentCharactersTab();
     });
@@ -1533,6 +1555,31 @@ function setupPresentCharactersListeners() {
     $('.rpg-char-stat-toggle').off('change').on('change', function () {
         const index = $(this).data('index');
         extensionSettings.trackerConfig.presentCharacters.characterStats.customStats[index].enabled = $(this).is(':checked');
+    });
+
+    // Character stat display mode
+    $('.rpg-char-stat-display-mode').off('change').on('change', function () {
+        const index = $(this).data('index');
+        const stat = extensionSettings.trackerConfig.presentCharacters.characterStats.customStats[index];
+        stat.displayMode = $(this).val();
+        renderPresentCharactersTab();
+    });
+
+    // Character stat maximum
+    $('.rpg-char-stat-max').off('change blur').on('change blur', function () {
+        const index = $(this).data('index');
+        const value = Math.max(1, parseInt($(this).val(), 10) || 100);
+        extensionSettings.trackerConfig.presentCharacters.characterStats.customStats[index].maxValue = value;
+    });
+
+    // Character stat colors
+    $('.rpg-char-stat-low').off('change').on('change', function () {
+        const index = $(this).data('index');
+        extensionSettings.trackerConfig.presentCharacters.characterStats.customStats[index].colorLow = $(this).val();
+    });
+    $('.rpg-char-stat-high').off('change').on('change', function () {
+        const index = $(this).data('index');
+        extensionSettings.trackerConfig.presentCharacters.characterStats.customStats[index].colorHigh = $(this).val();
     });
 
     // Rename character stat
