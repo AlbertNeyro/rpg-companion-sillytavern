@@ -30,6 +30,7 @@ import {
 import { renderUserStats } from '../rendering/userStats.js';
 import { renderInfoBox } from '../rendering/infoBox.js';
 import { renderThoughts } from '../rendering/thoughts.js';
+import { renderTestImageHud } from './imageHud.js';
 import { updateFabWidgets } from './mobile.js';
 import { safeToSnake } from '../../utils/transformations.js';
 
@@ -1062,6 +1063,23 @@ function renderInfoBoxTab() {
     html += '<small class="rpg-editor-note">Controls the relative vertical space used by the Info Box. Higher values make it larger.</small>';
     html += '</div>';
 
+    html += '<div class="rpg-test-image-editor">';
+    html += '<div class="rpg-editor-section-heading"><i class="fa-solid fa-image"></i><span>Test Image HUD</span><small>Visual testing only</small></div>';
+    html += '<div class="rpg-editor-toggle-row">';
+    html += '<input type="checkbox" id="rpg-test-image-hud-enabled" ' + (extensionSettings.testImageHud?.enabled ? 'checked' : '') + '>';
+    html += '<label for="rpg-test-image-hud-enabled">Show floating image</label>';
+    html += '</div>';
+    html += '<div class="rpg-editor-input-group">';
+    html += '<label for="rpg-test-image-hud-url">Image URL</label>';
+    html += '<input type="url" id="rpg-test-image-hud-url" value="' + String(extensionSettings.testImageHud?.url || '').replace(/"/g, '&quot;') + '" placeholder="https://example.com/image.png">';
+    html += '</div>';
+    html += '<div class="rpg-editor-input-row">';
+    html += '<label for="rpg-test-image-hud-size">HUD Size: <strong id="rpg-test-image-hud-size-value">' + (extensionSettings.testImageHud?.size || 3) + '</strong></label>';
+    html += '<input type="range" id="rpg-test-image-hud-size" min="1" max="5" step="1" value="' + (extensionSettings.testImageHud?.size || 3) + '" style="width: 100%;">';
+    html += '<small class="rpg-editor-note">Controls the floating image width.</small>';
+    html += '</div>';
+    html += '</div>';
+
     html += '<div class="rpg-editor-option-grid">';
     html += '<div class="rpg-editor-input-group"><label for="rpg-info-box-layout"><i class="fa-solid fa-table-cells"></i> Widget Layout</label>';
     html += '<select id="rpg-info-box-layout" class="rpg-select-mini"><option value="auto" ' + ((config.layout || 'auto') === 'auto' ? 'selected' : '') + '>Automatic</option><option value="2" ' + (String(config.layout) === '2' ? 'selected' : '') + '>2 columns</option><option value="4" ' + (String(config.layout) === '4' ? 'selected' : '') + '>4 columns</option></select></div>';
@@ -1142,6 +1160,26 @@ function setupInfoBoxListeners() {
         if (mobileInfoTab) mobileInfoTab.style.gridTemplateRows = 'minmax(0, ' + value + 'fr) minmax(0, var(--rpg-present-characters-row, 1fr))';
         saveSettings();
         $('#rpg-info-box-size-value').text(value);
+    });
+
+    $('#rpg-test-image-hud-enabled').off('change').on('change', function () {
+        extensionSettings.testImageHud.enabled = $(this).is(':checked');
+        renderTestImageHud();
+        saveSettings();
+    });
+
+    $('#rpg-test-image-hud-url').off('input change').on('input change', function () {
+        extensionSettings.testImageHud.url = $(this).val().trim();
+        renderTestImageHud();
+        saveSettings();
+    });
+
+    $('#rpg-test-image-hud-size').off('input change').on('input change', function () {
+        const value = Math.min(5, Math.max(1, Number($(this).val()) || 3));
+        extensionSettings.testImageHud.size = value;
+        $('#rpg-test-image-hud-size-value').text(value);
+        renderTestImageHud();
+        saveSettings();
     });
 
     $('#rpg-info-box-layout').off('change').on('change', function () { infoBoxConfig.layout = $(this).val(); renderInfoBox(); saveSettings(); });
