@@ -179,6 +179,9 @@ export let extensionSettings = {
         infoBox: {
             // Relative vertical size of the Info Box section in the main panel.
             size: 1,
+            layout: 'auto',
+            density: 'comfortable',
+            recentEventsLimit: 3,
             widgets: {
                 date: { enabled: true, format: 'Weekday, Month, Year', persistInHistory: true }, // Date enabled by default for history
                 weather: { enabled: true, persistInHistory: true }, // Weather enabled by default for history
