@@ -1032,7 +1032,15 @@ function setupUserStatsListeners() {
  */
 function renderInfoBoxTab() {
     const config = extensionSettings.trackerConfig.infoBox;
+    const infoBoxSize = Math.min(5, Math.max(1, Number(config.size) || 1));
     let html = '<div class="rpg-editor-section">';
+
+    html += '<h4><i class="fa-solid fa-expand"></i> Panel Size</h4>';
+    html += '<div class="rpg-editor-input-row">';
+    html += '<label for="rpg-info-box-size">Info Box Size: <strong id="rpg-info-box-size-value">' + infoBoxSize + '</strong></label>';
+    html += '<input type="range" id="rpg-info-box-size" min="1" max="5" step="1" value="' + infoBoxSize + '" style="width: 100%;">';
+    html += '<small class="rpg-editor-note">Controls the relative vertical space used by the Info Box. Higher values make it larger.</small>';
+    html += '</div>';
 
     html += `<h4><i class="fa-solid fa-info-circle"></i> ${i18n.getTranslation('template.trackerEditorModal.infoBoxTab.widgetsTitle')}</h4>`;
 
@@ -1090,7 +1098,14 @@ function renderInfoBoxTab() {
  * Set up event listeners for Info Box tab
  */
 function setupInfoBoxListeners() {
-    const widgets = extensionSettings.trackerConfig.infoBox.widgets;
+    const infoBoxConfig = extensionSettings.trackerConfig.infoBox;
+    const widgets = infoBoxConfig.widgets;
+
+    $('#rpg-info-box-size').off('input change').on('input change', function () {
+        const value = Math.min(5, Math.max(1, Number($(this).val()) || 1));
+        infoBoxConfig.size = value;
+        $('#rpg-info-box-size-value').text(value);
+    });
 
     $('#rpg-widget-date').off('change').on('change', function () {
         widgets.date.enabled = $(this).is(':checked');
@@ -1130,7 +1145,16 @@ function setupInfoBoxListeners() {
  */
 function renderPresentCharactersTab() {
     const config = extensionSettings.trackerConfig.presentCharacters;
+    const presentCharactersSize = Math.min(5, Math.max(1, Number(config.size) || 1));
     let html = '<div class="rpg-editor-section">';
+
+    // Panel size
+    html += '<h4><i class="fa-solid fa-expand"></i> Panel Size</h4>';
+    html += '<div class="rpg-editor-input-row">';
+    html += '<label for="rpg-present-characters-size">Present Characters Size: <strong id="rpg-present-characters-size-value">' + presentCharactersSize + '</strong></label>';
+    html += '<input type="range" id="rpg-present-characters-size" min="1" max="5" step="1" value="' + presentCharactersSize + '" style="width: 100%;">';
+    html += '<small class="rpg-editor-note">Controls the relative vertical space used by the Present Characters section. Higher values make it larger.</small>';
+    html += '</div>';
 
     // Relationship Fields Section
     html += `<h4><i class="fa-solid fa-heart"></i> ${i18n.getTranslation('template.trackerEditorModal.presentCharactersTab.relationshipStatusTitle')}</h4>`;
@@ -1243,6 +1267,14 @@ function renderPresentCharactersTab() {
  * Set up event listeners for Present Characters tab
  */
 function setupPresentCharactersListeners() {
+    const presentCharactersConfig = extensionSettings.trackerConfig.presentCharacters;
+
+    $('#rpg-present-characters-size').off('input change').on('input change', function () {
+        const value = Math.min(5, Math.max(1, Number($(this).val()) || 1));
+        presentCharactersConfig.size = value;
+        $('#rpg-present-characters-size-value').text(value);
+    });
+
     // Relationships enabled toggle
     $('#rpg-relationships-enabled').off('change').on('change', function () {
         if (!extensionSettings.trackerConfig.presentCharacters.relationships) {
