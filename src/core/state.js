@@ -231,8 +231,8 @@ export let extensionSettings = {
             characterStats: {
                 enabled: false,
                 customStats: [
-                    { id: 'health', name: 'Health', enabled: true },
-                    { id: 'arousal', name: 'Arousal', enabled: true }
+                    { id: 'health', name: 'Health', enabled: true, displayMode: 'percentage', maxValue: 100, colorLow: '#ff4444', colorHigh: '#44ff44' },
+                    { id: 'arousal', name: 'Arousal', enabled: true, displayMode: 'percentage', maxValue: 100, colorLow: '#ffaa00', colorHigh: '#44ffff' }
                 ]
             }
         }
