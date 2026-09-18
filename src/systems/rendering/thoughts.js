@@ -96,6 +96,10 @@ export function renderThoughts({ preserveScroll = false, useCommittedFallback = 
     const presentCharactersSize = Math.min(5, Math.max(1, Number(extensionSettings.trackerConfig?.presentCharacters?.size) || 1));
     document.documentElement.style.setProperty('--rpg-present-characters-flex', String(presentCharactersSize));
     document.documentElement.style.setProperty('--rpg-present-characters-row', presentCharactersSize + 'fr');
+    const thoughtsElement = document.getElementById('rpg-thoughts');
+    if (thoughtsElement) thoughtsElement.style.flex = presentCharactersSize + ' 1 0px';
+    const mobileInfoTab = document.querySelector('.rpg-mobile-tab-content[data-tab-content="info"]');
+    if (mobileInfoTab) mobileInfoTab.style.gridTemplateRows = 'minmax(0, var(--rpg-info-box-row, 1fr)) minmax(0, ' + presentCharactersSize + 'fr)';
 
     renderAlternatePresentCharacters({ useCommittedFallback });
     queueThoughtBasedExpressionsUpdate();
