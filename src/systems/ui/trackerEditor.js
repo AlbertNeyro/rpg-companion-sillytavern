@@ -1118,6 +1118,11 @@ function setupInfoBoxListeners() {
         infoBoxConfig.size = value;
         document.documentElement.style.setProperty('--rpg-info-box-flex', String(value));
         document.documentElement.style.setProperty('--rpg-info-box-row', value + 'fr');
+        const infoBoxElement = document.getElementById('rpg-info-box');
+        if (infoBoxElement) infoBoxElement.style.flex = value + ' 1 0px';
+        const mobileInfoTab = document.querySelector('.rpg-mobile-tab-content[data-tab-content="info"]');
+        if (mobileInfoTab) mobileInfoTab.style.gridTemplateRows = 'minmax(0, ' + value + 'fr) minmax(0, var(--rpg-present-characters-row, 1fr))';
+        saveSettings();
         $('#rpg-info-box-size-value').text(value);
     });
 
@@ -1288,6 +1293,11 @@ function setupPresentCharactersListeners() {
         presentCharactersConfig.size = value;
         document.documentElement.style.setProperty('--rpg-present-characters-flex', String(value));
         document.documentElement.style.setProperty('--rpg-present-characters-row', value + 'fr');
+        const thoughtsElement = document.getElementById('rpg-thoughts');
+        if (thoughtsElement) thoughtsElement.style.flex = value + ' 1 0px';
+        const mobileInfoTab = document.querySelector('.rpg-mobile-tab-content[data-tab-content="info"]');
+        if (mobileInfoTab) mobileInfoTab.style.gridTemplateRows = 'minmax(0, var(--rpg-info-box-row, 1fr)) minmax(0, ' + value + 'fr)';
+        saveSettings();
         $('#rpg-present-characters-size-value').text(value);
     });
 
