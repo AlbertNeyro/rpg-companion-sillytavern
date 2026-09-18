@@ -332,6 +332,10 @@ export function renderInfoBox() {
     // Keep the desktop flex sizing and mobile grid sizing in sync.
     document.documentElement.style.setProperty('--rpg-info-box-flex', String(infoBoxSize));
     document.documentElement.style.setProperty('--rpg-info-box-row', infoBoxSize + 'fr');
+    const infoBoxElement = document.getElementById('rpg-info-box');
+    if (infoBoxElement) infoBoxElement.style.flex = infoBoxSize + ' 1 0px';
+    const mobileInfoTab = document.querySelector('.rpg-mobile-tab-content[data-tab-content="info"]');
+    if (mobileInfoTab) mobileInfoTab.style.gridTemplateRows = 'minmax(0, ' + infoBoxSize + 'fr) minmax(0, var(--rpg-present-characters-row, 1fr))';
 
     // Build visual dashboard HTML
     // Wrap all content in a scrollable container
