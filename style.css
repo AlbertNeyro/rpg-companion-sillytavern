@@ -12074,3 +12074,124 @@ body.documentstyle .rpg-inline-thoughts {
     box-sizing: border-box;
     font: inherit;
 }
+
+/* Test Image HUD — intentionally isolated from the generated RPG UI. */
+.rpg-test-image-hud {
+    --rpg-test-image-width: 300px;
+    position: fixed;
+    z-index: 10001;
+    width: min(var(--rpg-test-image-width), calc(100vw - 40px));
+    max-height: calc(100vh - 170px);
+    overflow: hidden;
+    border: 1px solid var(--rpg-highlight, #e94560);
+    border-radius: 10px;
+    background: var(--rpg-bg, #111);
+    color: var(--rpg-text, #eee);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(8px);
+}
+
+.rpg-test-image-hud-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 32px;
+    padding: 6px 8px 6px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    background: color-mix(in srgb, var(--rpg-accent, #16213e) 75%, transparent);
+    cursor: default;
+    user-select: none;
+}
+
+.rpg-test-image-hud-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.rpg-test-image-hud-title i {
+    opacity: 0.8;
+}
+
+.rpg-test-image-hud-close {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.rpg-test-image-hud-close:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.rpg-test-image-hud-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-height: calc(100vh - 215px);
+    overflow: auto;
+    padding: 6px;
+}
+
+.rpg-test-image-hud-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: calc(100vh - 230px);
+    object-fit: contain;
+    border-radius: 6px;
+}
+
+.rpg-test-image-editor {
+    margin: 0 0 1rem;
+    padding: 0.9rem;
+    border: 1px solid var(--rpg-border);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--rpg-bg) 82%, transparent);
+}
+
+.rpg-editor-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0.65rem;
+    font-weight: 600;
+}
+
+.rpg-editor-section-heading small {
+    margin-left: auto;
+    opacity: 0.55;
+    font-size: 0.72rem;
+    font-weight: 400;
+}
+
+.rpg-test-image-editor input[type="url"] {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.rpg-test-image-editor .rpg-editor-note {
+    opacity: 0.65;
+}
+
+@media (max-width: 600px) {
+    .rpg-test-image-hud {
+        left: 12px !important;
+        right: 12px !important;
+        width: auto !important;
+        max-width: none;
+    }
+
+    .rpg-test-image-editor .rpg-editor-section-heading small {
+        display: none;
+    }
+}
