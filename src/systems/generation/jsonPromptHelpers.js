@@ -222,7 +222,12 @@ export function buildCharactersJSONInstruction() {
         for (let i = 0; i < enabledCharStats.length; i++) {
             const stat = enabledCharStats[i];
             const comma = i < enabledCharStats.length - 1 ? ',' : '';
-            instruction += `      {"name": "${stat.name}", "value": X}${comma}\n`;
+            if (stat.displayMode === 'text') {
+                instruction += `      {"name": "${stat.name}", "value": "Text value"}${comma}  // descriptive text\n`;
+            } else {
+                const maxValue = Math.max(1, Number(stat.maxValue) || 100);
+                instruction += `      {"name": "${stat.name}", "value": X}${comma}  // 0 to ${maxValue} (${maxValue === 100 ? 'percentage' : 'numeric value'})\n`;
+            }
         }
         instruction += '    ]';
     }
