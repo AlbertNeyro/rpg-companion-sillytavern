@@ -225,8 +225,7 @@ export function buildCharactersJSONInstruction() {
             if (stat.displayMode === 'text') {
                 instruction += `      {"name": "${stat.name}", "value": "Text value"}${comma}  // descriptive text\n`;
             } else {
-                const maxValue = Math.max(1, Number(stat.maxValue) || 100);
-                instruction += `      {"name": "${stat.name}", "value": X}${comma}  // 0 to ${maxValue} (${maxValue === 100 ? 'percentage' : 'numeric value'})\n`;
+                instruction += `      {"name": "${stat.name}", "value": X}${comma}  // numeric percentage from 0 to 100\n`;
             }
         }
         instruction += '    ]';
