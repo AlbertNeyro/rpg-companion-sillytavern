@@ -339,7 +339,9 @@ export function renderInfoBox() {
 
     // Build visual dashboard HTML
     // Wrap all content in a scrollable container
-    let html = '<div class="rpg-info-content">';
+    const infoLayout = ['auto', '2', '4'].includes(String(config?.layout)) ? String(config.layout) : 'auto';
+    const infoDensity = config?.density === 'compact' ? 'compact' : 'comfortable';
+    let html = '<div class="rpg-info-content" data-layout="' + infoLayout + '" data-density="' + infoDensity + '">';
 
     // Row 1: Date, Weather, Temperature, Time widgets
     const row1Widgets = [];
@@ -554,7 +556,8 @@ export function renderInfoBox() {
         `;
 
         // Dynamically generate event lines (max 3)
-        for (let i = 0; i < Math.min(validEvents.length, 3); i++) {
+        const eventLimit = Math.max(1, Math.min(5, Number(config?.recentEventsLimit) || 3));
+        for (let i = 0; i < Math.min(validEvents.length, eventLimit); i++) {
             html += `
                         <div class="rpg-notebook-line">
                             <span class="rpg-bullet">•</span>
@@ -564,7 +567,7 @@ export function renderInfoBox() {
         }
 
         // If we have less than 3 events, add empty placeholders with + icon
-        for (let i = validEvents.length; i < 3; i++) {
+        for (let i = validEvents.length; i < eventLimit; i++) {
             html += `
                         <div class="rpg-notebook-line rpg-event-add">
                             <span class="rpg-bullet">+</span>
