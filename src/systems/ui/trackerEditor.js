@@ -1278,21 +1278,10 @@ function renderPresentCharactersTab() {
     html += '</div>';
     html += `<button class="rpg-btn-secondary" id="rpg-add-relationship"><i class="fa-solid fa-plus"></i> ${i18n.getTranslation('template.trackerEditorModal.presentCharactersTab.newRelationshipButton')}</button>`;
 
-    // Appearance & Demeanor Fields
-    // These are built-in fields and must always be present in the editor,
-    // even for older presets that do not contain customFields.
-    const defaultCharacterFields = [
-        { id: 'appearance', name: 'Appearance', enabled: true, description: 'Visible physical appearance (clothing, hair, notable features)', persistInHistory: false },
-        { id: 'demeanor', name: 'Demeanor', enabled: true, description: 'Observable demeanor or emotional state', persistInHistory: false }
-    ];
-    const savedCharacterFields = Array.isArray(config.customFields) ? config.customFields : [];
-    const characterDetailFields = defaultCharacterFields.map(defaultField => {
-        const saved = savedCharacterFields.find(field => field?.id === defaultField.id);
-        return saved ? { ...defaultField, ...saved } : { ...defaultField };
-    }).concat(savedCharacterFields.filter(field => field?.id !== 'appearance' && field?.id !== 'demeanor'));
-    config.customFields = characterDetailFields;
-    html += '<h4><i class="fa-solid fa-user"></i> Appearance & Demeanor Fields</h4>';
-    html += '<p class="rpg-editor-hint">Configure the descriptive fields shown for each present character. These fields are also available to the AI tracker.</p>';
+    // Optional character detail fields.
+    const characterDetailFields = Array.isArray(config.customFields) ? config.customFields : [];
+    html += '<h4><i class="fa-solid fa-user"></i> Character Detail Fields</h4>';
+    html += '<p class="rpg-editor-hint">Configure additional descriptive fields shown for each present character.</p>';
 
     html += '<div class="rpg-editor-fields-list rpg-character-detail-fields" id="rpg-character-detail-fields-list">';
 
