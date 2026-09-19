@@ -11965,25 +11965,36 @@ body.documentstyle .rpg-inline-thoughts {
 
 /* Character stat editor controls */
 #rpg-char-stats-list .rpg-editor-field-item {
-    grid-template-columns: auto minmax(70px, 0.7fr) minmax(95px, auto) minmax(180px, 2.4fr) auto;
+    grid-template-columns: auto minmax(60px, 0.75fr) minmax(90px, 0.85fr) minmax(0, 2fr) auto;
+}
+
+#rpg-char-stats-list .rpg-char-stat-label,
+#rpg-char-stats-list .rpg-char-stat-display-mode,
+#rpg-char-stats-list .rpg-char-stat-prompt,
+#rpg-char-stats-list .rpg-char-stat-remove {
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 #rpg-char-stats-list .rpg-char-stat-label {
-    min-width: 0;
     width: 100%;
 }
 
 #rpg-char-stats-list .rpg-char-stat-prompt {
-    min-width: 0;
     width: 100%;
     min-height: 2.6rem;
-    box-sizing: border-box;
+    resize: vertical;
 }
 
-#rpg-char-stats-list .rpg-char-stat-display-mode,
-#rpg-char-stats-list .rpg-char-stat-max {
-    min-width: 0;
-    box-sizing: border-box;
+#rpg-char-stats-list .rpg-char-stat-remove {
+    position: relative;
+    z-index: 2;
+    justify-self: end;
+    cursor: pointer;
+}
+
+#rpg-char-stats-list .rpg-char-stat-display-mode {
+    width: 100%;
 }
 
 #rpg-char-stats-list .rpg-char-stat-low,
@@ -12000,16 +12011,22 @@ body.documentstyle .rpg-inline-thoughts {
     }
 
     #rpg-char-stats-list .rpg-char-stat-label {
-        min-width: 0;
+        grid-column: 2 / 4;
     }
 
     #rpg-char-stats-list .rpg-char-stat-display-mode {
-        grid-column: 2 / 3;
+        grid-column: 2 / 4;
     }
 
     #rpg-char-stats-list .rpg-char-stat-prompt {
         grid-column: 2 / 4;
         width: 100%;
+    }
+
+    #rpg-char-stats-list .rpg-char-stat-remove {
+        grid-column: 3;
+        grid-row: auto;
+        justify-self: end;
     }
 }
 
