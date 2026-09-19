@@ -1270,13 +1270,15 @@ function renderPresentCharactersTab() {
     html += '</div>';
     html += `<button class="rpg-btn-secondary" id="rpg-add-relationship"><i class="fa-solid fa-plus"></i> ${i18n.getTranslation('template.trackerEditorModal.presentCharactersTab.newRelationshipButton')}</button>`;
 
-    // Custom Fields Section
-    html += `<h4><i class="fa-solid fa-list"></i> ${i18n.getTranslation('template.trackerEditorModal.presentCharactersTab.appearanceDemeanorTitle')}</h4>`;
-    html += `<p class="rpg-editor-hint">${i18n.getTranslation('template.trackerEditorModal.presentCharactersTab.appearanceDemeanorHint')}</p>`;
+    // Appearance & Demeanor Fields
+    html += '<h4><i class="fa-solid fa-user"></i> Appearance & Demeanor Fields</h4>';
+    html += '<p class="rpg-editor-hint">Configure the descriptive fields shown for each present character. These fields are also available to the AI tracker.</p>';
 
-    html += '<div class="rpg-editor-fields-list" id="rpg-editor-fields-list">';
+    html += '<div class="rpg-editor-fields-list rpg-character-detail-fields" id="rpg-editor-fields-list">';
 
     config.customFields.forEach((field, index) => {
+        const fieldName = String(field.name || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+        const fieldDescription = String(field.description || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;');
         html += `
             <div class="rpg-editor-field-item" data-index="${index}">
                 <div class="rpg-field-controls">
@@ -1284,15 +1286,15 @@ function renderPresentCharactersTab() {
                     <button class="rpg-field-move-down" data-index="${index}" ${index === config.customFields.length - 1 ? 'disabled' : ''} title="Move down"><i class="fa-solid fa-arrow-down"></i></button>
                 </div>
                 <input type="checkbox" ${field.enabled ? 'checked' : ''} class="rpg-field-toggle" data-index="${index}">
-                <input type="text" value="${field.name}" class="rpg-field-label" data-index="${index}" placeholder="Field Name">
-                <input type="text" value="${field.description || ''}" class="rpg-field-placeholder" data-index="${index}" placeholder="AI Instruction">
+                <input type="text" value="${fieldName}" class="rpg-field-label" data-index="${index}" placeholder="Field Name">
+                <input type="text" value="${fieldDescription}" class="rpg-field-placeholder" data-index="${index}" placeholder="AI Instruction">
                 <button class="rpg-field-remove" data-index="${index}" title="Remove field"><i class="fa-solid fa-trash"></i></button>
             </div>
         `;
     });
 
     html += '</div>';
-    html += `<button class="rpg-btn-secondary" id="rpg-add-field"><i class="fa-solid fa-plus"></i> ${i18n.getTranslation('template.trackerEditorModal.presentCharactersTab.addCustomFieldButton')}</button>`;
+    html += '<button class="rpg-btn-secondary" id="rpg-add-field"><i class="fa-solid fa-plus"></i> Add Custom Field</button>';
 
     // Thoughts Section
     html += `<h4><i class="fa-solid fa-comment-dots"></i> ${i18n.getTranslation('template.trackerEditorModal.presentCharactersTab.thoughtsConfigTitle')}</h4>`;
