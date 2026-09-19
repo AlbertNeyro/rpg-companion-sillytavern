@@ -12212,3 +12212,22 @@ body.documentstyle .rpg-inline-thoughts {
         display: none;
     }
 }
+
+
+/* Keep character detail fields visible above the stats block. */
+.rpg-character-content {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.rpg-character-info {
+    flex: 0 1 auto;
+    min-height: 1.2em;
+    max-height: 45%;
+}
+
+.rpg-character-field {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+}
