@@ -1545,10 +1545,15 @@ function setupPresentCharactersListeners() {
         renderPresentCharactersTab();
     });
 
-    // Remove field
-    $('.rpg-field-remove').off('click').on('click', function () {
-        const index = $(this).data('index');
-        extensionSettings.trackerConfig.presentCharacters.customFields.splice(index, 1);
+    // Remove custom character field.
+    // Character-stat remove buttons have their own handler and must not be
+    // matched here; both controls share the base field styling class.
+    $('#rpg-editor-tab-presentCharacters .rpg-field-remove:not(.rpg-char-stat-remove)').off('click').on('click', function () {
+        const fields = extensionSettings.trackerConfig.presentCharacters.customFields;
+        if (!Array.isArray(fields)) return;
+        const index = Number($(this).data('index'));
+        if (!Number.isInteger(index) || index < 0 || index >= fields.length) return;
+        fields.splice(index, 1);
         renderPresentCharactersTab();
     });
 
@@ -1618,9 +1623,17 @@ function setupPresentCharactersListeners() {
     });
 
     // Remove character stat
-    $('.rpg-char-stat-remove').off('click').on('click', function () {
-        const index = $(this).data('index');
-        extensionSettings.trackerConfig.presentCharacters.characterStats.customStats.splice(index, 1);
+    $('.rpg-char-stat-remove').off('click').on('click', function (event) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        const stats = extensionSettings.trackerConfig.presentCharacters.characterStats?.customStats;
+        if (!Array.isArray(stats)) return;
+
+        const index = Number($(this).data('index'));
+        if (!Number.isInteger(index) || index < 0 || index >= stats.length) return;
+
+        stats.splice(index, 1);
         renderPresentCharactersTab();
     });
 
@@ -1643,11 +1656,14 @@ function setupPresentCharactersListeners() {
     });
 
     // Rename character stat
-    $('.rpg-char-stat-label').off('blur').on('blur', function () {
-        const index = $(this).data('index');
-        const value = $(this).val();
-        const list_with_stats = extensionSettings.trackerConfig.presentCharacters.characterStats.customStats
-        set_ids_names(list_with_stats, index, value);
+    $('.rpg-char-stat-label').off('input').on('input', function () {
+        const stats = extensionSettings.trackerConfig.presentCharacters.characterStats?.customStats;
+        if (!Array.isArray(stats)) return;
+
+        const index = Number($(this).data('index'));
+        if (!Number.isInteger(index) || index < 0 || index >= stats.length) return;
+
+        set_ids_names(stats, index, $(this).val());
     });
 }
 
