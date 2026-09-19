@@ -12231,3 +12231,9 @@ body.documentstyle .rpg-inline-thoughts {
     width: 100%;
     box-sizing: border-box;
 }
+
+.rpg-character-field-label {
+    color: var(--rpg-highlight);
+    font-weight: 600;
+    opacity: 0.9;
+}
