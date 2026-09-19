@@ -429,10 +429,7 @@ function resetToDefaults() {
                 'Enemy': '⚔️',
                 'Neutral': '⚖️'
             },
-            customFields: [
-                { id: 'appearance', name: 'Appearance', enabled: true, description: 'Visible physical appearance (clothing, hair, notable features)', persistInHistory: false },
-                { id: 'demeanor', name: 'Demeanor', enabled: true, description: 'Observable demeanor or emotional state', persistInHistory: false }
-            ],
+            customFields: [],
             thoughts: {
                 enabled: true,
                 name: 'Thoughts',
