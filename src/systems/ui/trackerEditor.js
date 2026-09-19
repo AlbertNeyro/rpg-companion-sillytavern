@@ -552,6 +552,21 @@ function migrateTrackerPreset(config) {
             }));
         }
 
+        // Ensure the built-in Appearance and Demeanor fields always exist.
+        // Older saved configurations can predate these fields or contain an empty customFields array.
+        if (!Array.isArray(migrated.presentCharacters.customFields)) {
+            migrated.presentCharacters.customFields = [];
+        }
+        const defaultCharacterFields = [
+            { id: 'appearance', name: 'Appearance', enabled: true, description: 'Visible physical appearance (clothing, hair, notable features)', persistInHistory: false },
+            { id: 'demeanor', name: 'Demeanor', enabled: true, description: 'Observable demeanor or emotional state', persistInHistory: false }
+        ];
+        for (const defaultField of defaultCharacterFields) {
+            if (!migrated.presentCharacters.customFields.some(field => field?.id === defaultField.id)) {
+                migrated.presentCharacters.customFields.push(defaultField);
+            }
+        }
+
         // Add persistInHistory to customFields if missing (v3.4.0)
         if (migrated.presentCharacters.customFields) {
             migrated.presentCharacters.customFields = migrated.presentCharacters.customFields.map(field => ({
@@ -1271,12 +1286,14 @@ function renderPresentCharactersTab() {
     html += `<button class="rpg-btn-secondary" id="rpg-add-relationship"><i class="fa-solid fa-plus"></i> ${i18n.getTranslation('template.trackerEditorModal.presentCharactersTab.newRelationshipButton')}</button>`;
 
     // Appearance & Demeanor Fields
+    // Always show the two built-in descriptive fields above Character Stats.
+    const characterDetailFields = Array.isArray(config.customFields) ? config.customFields : [];
     html += '<h4><i class="fa-solid fa-user"></i> Appearance & Demeanor Fields</h4>';
     html += '<p class="rpg-editor-hint">Configure the descriptive fields shown for each present character. These fields are also available to the AI tracker.</p>';
 
     html += '<div class="rpg-editor-fields-list rpg-character-detail-fields" id="rpg-editor-fields-list">';
 
-    config.customFields.forEach((field, index) => {
+    characterDetailFields.forEach((field, index) => {
         const fieldName = String(field.name || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;');
         const fieldDescription = String(field.description || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;');
         html += `
