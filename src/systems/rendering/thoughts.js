@@ -135,24 +135,15 @@ export function renderThoughts({ preserveScroll = false, useCommittedFallback = 
 
     // Get tracker configuration
     const config = extensionSettings.trackerConfig?.presentCharacters;
-    // Built-in character detail fields must remain visible even when an older
-    // preset has no customFields array yet.
-    const defaultCharacterFields = [
-        { id: 'appearance', name: 'Appearance', enabled: true, description: 'Visible physical appearance (clothing, hair, notable features)' },
-        { id: 'demeanor', name: 'Demeanor', enabled: true, description: 'Observable demeanor or emotional state' }
-    ];
+    // Only user-configured character detail fields are rendered.
     const configuredCharacterFields = Array.isArray(config?.customFields) ? config.customFields : [];
-    const characterFields = defaultCharacterFields.map(defaultField => {
-        const saved = configuredCharacterFields.find(field => field?.id === defaultField.id || field?.name?.toLowerCase() === defaultField.name.toLowerCase());
-        return saved ? { ...defaultField, ...saved } : defaultField;
-    }).concat(
-        configuredCharacterFields.filter(field => {
-            const name = String(field?.name || '').toLowerCase();
-            return field?.id !== 'appearance' && field?.id !== 'demeanor' &&
-                name !== 'appearance' && name !== 'demeanor';
-        })
-    );
-    const enabledFields = characterFields.filter(f => f && f.enabled !== false && f.name);
+    const enabledFields = configuredCharacterFields.filter(f => {
+        const id = String(f?.id || '').toLowerCase();
+        const name = String(f?.name || '').toLowerCase();
+        return f && f.enabled !== false && f.name &&
+            id !== 'appearance' && id !== 'demeanor' &&
+            name !== 'appearance' && name !== 'demeanor';
+    });
     const characterStatsConfig = config?.characterStats;
     const enabledCharStats = characterStatsConfig?.enabled && characterStatsConfig?.customStats?.filter(s => s && s.enabled && s.name) || [];
     const relationshipFields = config?.relationshipFields || [];
