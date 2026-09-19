@@ -186,25 +186,15 @@ export function buildInfoBoxJSONInstruction() {
 export function buildCharactersJSONInstruction() {
     const userName = getContext().name1;
     const presentCharsConfig = extensionSettings.trackerConfig?.presentCharacters;
-    // Appearance and Demeanor are built-in character details. Keep them in the
-    // generation schema even for older presets that have no customFields array.
-    const defaultCharacterFields = [
-        { id: 'appearance', name: 'Appearance', enabled: true, description: 'Visible physical appearance (clothing, hair, notable features)' },
-        { id: 'demeanor', name: 'Demeanor', enabled: true, description: 'Observable demeanor or emotional state' }
-    ];
+    // Only user-configured character detail fields are included in the generation schema.
     const configuredFields = Array.isArray(presentCharsConfig?.customFields) ? presentCharsConfig.customFields : [];
-    const mergedFields = defaultCharacterFields.map(defaultField => {
-        const saved = configuredFields.find(field =>
-            field?.id === defaultField.id ||
-            String(field?.name || '').toLowerCase() === defaultField.name.toLowerCase()
-        );
-        return saved ? { ...defaultField, ...saved } : defaultField;
-    }).concat(configuredFields.filter(field => {
-        const name = String(field?.name || '').toLowerCase();
-        return field?.id !== 'appearance' && field?.id !== 'demeanor' &&
+    const enabledFields = configuredFields.filter(f => {
+        const id = String(f?.id || '').toLowerCase();
+        const name = String(f?.name || '').toLowerCase();
+        return f && f.enabled !== false && f.name &&
+            id !== 'appearance' && id !== 'demeanor' &&
             name !== 'appearance' && name !== 'demeanor';
-    }));
-    const enabledFields = mergedFields.filter(f => f && f.enabled !== false && f.name);
+    });
     const relationshipsEnabled = presentCharsConfig?.relationships?.enabled !== false;
     const thoughtsConfig = presentCharsConfig?.thoughts;
     const characterStats = presentCharsConfig?.characterStats;
