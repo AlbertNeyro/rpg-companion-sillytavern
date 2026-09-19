@@ -549,19 +549,15 @@ function migrateTrackerPreset(config) {
             }));
         }
 
-        // Ensure the built-in Appearance and Demeanor fields always exist.
-        // Older saved configurations can predate these fields or contain an empty customFields array.
-        if (!Array.isArray(migrated.presentCharacters.customFields)) {
+        // Remove the retired built-in Appearance and Demeanor fields from saved presets.
+        if (Array.isArray(migrated.presentCharacters.customFields)) {
+            migrated.presentCharacters.customFields = migrated.presentCharacters.customFields.filter(field => {
+                const id = String(field?.id || '').toLowerCase();
+                const name = String(field?.name || '').toLowerCase();
+                return id !== 'appearance' && id !== 'demeanor' && name !== 'appearance' && name !== 'demeanor';
+            });
+        } else {
             migrated.presentCharacters.customFields = [];
-        }
-        const defaultCharacterFields = [
-            { id: 'appearance', name: 'Appearance', enabled: true, description: 'Visible physical appearance (clothing, hair, notable features)', persistInHistory: false },
-            { id: 'demeanor', name: 'Demeanor', enabled: true, description: 'Observable demeanor or emotional state', persistInHistory: false }
-        ];
-        for (const defaultField of defaultCharacterFields) {
-            if (!migrated.presentCharacters.customFields.some(field => field?.id === defaultField.id)) {
-                migrated.presentCharacters.customFields.push(defaultField);
-            }
         }
 
         // Add persistInHistory to customFields if missing (v3.4.0)
