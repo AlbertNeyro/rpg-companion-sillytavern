@@ -444,12 +444,12 @@ export function renderThoughts({ preserveScroll = false, useCommittedFallback = 
                         html += `
                                 <div class="rpg-character-field rpg-character-${fieldId}" style="position: relative;">
                                     ${lockIconHtml}
-                                    <span class="rpg-editable${emptyClass}" contenteditable="true" data-character="${char.name}" data-field="${field.name}" title="${i18n.getTranslation('thoughts.clickToEdit') || 'Click to edit'}" ${placeholder}>${fieldValue}</span>
+                                    <span class="rpg-character-field-label">${field.name}:</span> <span class="rpg-editable${emptyClass}" contenteditable="true" data-character="${char.name}" data-field="${field.name}" title="${i18n.getTranslation('thoughts.clickToEdit') || 'Click to edit'}" ${placeholder}>${fieldValue}</span>
                                 </div>
                         `;
                     } else {
                         html += `
-                                <div class="rpg-character-field rpg-character-${fieldId} rpg-editable${emptyClass}" contenteditable="true" data-character="${char.name}" data-field="${field.name}" title="${i18n.getTranslation('thoughts.clickToEdit') || 'Click to edit'}" ${placeholder}>${fieldValue}</div>
+                                <div class="rpg-character-field rpg-character-${fieldId}"><span class="rpg-character-field-label">${field.name}:</span> <span class="rpg-editable${emptyClass}" contenteditable="true" data-character="${char.name}" data-field="${field.name}" title="${i18n.getTranslation('thoughts.clickToEdit') || 'Click to edit'}" ${placeholder}>${fieldValue}</span></div>
                         `;
                     }
                 }
