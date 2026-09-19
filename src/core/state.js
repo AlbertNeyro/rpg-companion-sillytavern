@@ -225,11 +225,8 @@ export let extensionSettings = {
                 'Enemy': '⚔️',
                 'Neutral': '⚖️'
             },
-            // Custom fields (appearance, demeanor, etc. - shown after relationship, separated by |)
-            customFields: [
-                { id: 'appearance', name: 'Appearance', enabled: true, description: 'Visible physical appearance (clothing, hair, notable features)', persistInHistory: false },
-                { id: 'demeanor', name: 'Demeanor', enabled: true, description: 'Observable demeanor or emotional state', persistInHistory: false }
-            ],
+            // Optional custom character detail fields shown after relationships.
+            customFields: [],
             // Thoughts configuration (separate line)
             thoughts: {
                 enabled: true,
