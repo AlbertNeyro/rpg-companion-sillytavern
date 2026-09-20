@@ -288,10 +288,11 @@ export let extensionSettings = {
     // External API settings for 'external' generation mode
     externalApiSettings: {
         baseUrl: '',           // OpenAI-compatible API base URL (e.g., "https://api.openai.com/v1")
-        // apiKey is NOT stored here for security. It is stored in localStorage('rpg_companion_api_key')
+        // apiKey is NOT stored here for security. Direct mode keeps it in localStorage.
         model: '',             // Model identifier (e.g., "gpt-4o-mini")
         maxTokens: 8192,       // Maximum tokens for generation
-        temperature: 0.7       // Temperature setting for generation
+        temperature: 0.7,      // Temperature setting for generation
+        useSillyTavernProxy: false // Route external requests through SillyTavern to avoid browser CORS
     },
     // Lock state for tracker items (v3 JSON format feature)
     lockedItems: {
