@@ -1078,6 +1078,16 @@ async function initUI() {
         saveSettings();
     });
 
+    $('#rpg-external-use-proxy').on('change', function() {
+        if (!extensionSettings.externalApiSettings) {
+            extensionSettings.externalApiSettings = {
+                baseUrl: '', model: '', maxTokens: 8192, temperature: 0.7, useSillyTavernProxy: false
+            };
+        }
+        extensionSettings.externalApiSettings.useSillyTavernProxy = $(this).is(':checked');
+        saveSettings();
+    });
+
     $('#rpg-toggle-api-key-visibility').on('click', function() {
         const $input = $('#rpg-external-api-key');
         const type = $input.attr('type') === 'password' ? 'text' : 'password';
@@ -1118,7 +1128,8 @@ async function initUI() {
 
     // Initialize UI state (enable/disable is in Extensions tab)
     $('#rpg-toggle-auto-update').prop('checked', extensionSettings.autoUpdate);
-    $('#rpg-position-select').val(extensionSettings.panelPosition);
+    $('#rpg-position-select').val(extensionSettings.panelPosition);    $('#rpg-external-use-proxy').prop('checked', extensionSettings.externalApiSettings?.useSillyTavernProxy === true);
+
     $('#rpg-update-depth').val(extensionSettings.updateDepth);
     $('#rpg-toggle-user-stats').prop('checked', extensionSettings.showUserStats);
     $('#rpg-toggle-info-box').prop('checked', extensionSettings.showInfoBox);
