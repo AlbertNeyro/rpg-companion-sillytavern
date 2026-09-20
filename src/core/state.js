@@ -291,7 +291,8 @@ export let extensionSettings = {
         // apiKey is NOT stored here for security. It is stored in localStorage('rpg_companion_api_key')
         model: '',             // Model identifier (e.g., "gpt-4o-mini")
         maxTokens: 8192,       // Maximum tokens for generation
-        temperature: 0.7       // Temperature setting for generation
+        temperature: 0.7,      // Temperature setting for generation
+        useSillyTavernProxy: false // Route through SillyTavern to avoid provider CORS
     },
     // Lock state for tracker items (v3 JSON format feature)
     lockedItems: {
