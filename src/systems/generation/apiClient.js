@@ -3,7 +3,7 @@
  * Handles API calls for RPG tracker generation
  */
 
-import { chat, eventSource, getRequestHeaders } from '../../../../../../../script.js';
+import { chat, eventSource } from '../../../../../../../script.js';
 import { executeSlashCommandsOnChatInput } from '../../../../../../../scripts/slash-commands.js';
 import { safeGenerateRaw, extractTextFromResponse } from '../../utils/responseExtractor.js';
 
@@ -80,7 +80,7 @@ export async function generateWithExternalAPI(messages) {
             // from SillyTavern's Custom API secret store.
             response = await fetch('/api/backends/chat-completions/generate', {
                 method: 'POST',
-                headers: getRequestHeaders(),
+                headers: { 'Content-Type': 'application/json' },
                 cache: 'no-cache',
                 body: JSON.stringify({
                     ...payload,
