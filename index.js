@@ -1071,10 +1071,20 @@ async function initUI() {
     $('#rpg-external-temperature').on('change', function() {
         if (!extensionSettings.externalApiSettings) {
             extensionSettings.externalApiSettings = {
-                baseUrl: '', apiKey: '', model: '', maxTokens: 8192, temperature: 0.7
+                baseUrl: '', apiKey: '', model: '', maxTokens: 8192, temperature: 0.7, useSillyTavernProxy: false
             };
         }
         extensionSettings.externalApiSettings.temperature = parseFloat(String($(this).val()));
+        saveSettings();
+    });
+
+    $('#rpg-external-use-proxy').on('change', function() {
+        if (!extensionSettings.externalApiSettings) {
+            extensionSettings.externalApiSettings = {
+                baseUrl: '', model: '', maxTokens: 8192, temperature: 0.7, useSillyTavernProxy: false
+            };
+        }
+        extensionSettings.externalApiSettings.useSillyTavernProxy = $(this).is(':checked');
         saveSettings();
     });
 
@@ -1242,6 +1252,7 @@ async function initUI() {
 
         $('#rpg-external-model').val(extensionSettings.externalApiSettings.model || '');
         $('#rpg-external-max-tokens').val(extensionSettings.externalApiSettings.maxTokens || 8192);
+        $('#rpg-external-use-proxy').prop('checked', extensionSettings.externalApiSettings.useSillyTavernProxy === true);
         $('#rpg-external-temperature').val(extensionSettings.externalApiSettings.temperature ?? 0.7);
     }
 
