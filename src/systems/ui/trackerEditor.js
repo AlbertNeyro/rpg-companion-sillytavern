@@ -1337,6 +1337,10 @@ function renderPresentCharactersTab() {
     charStats.forEach((stat, index) => {
         html += `
             <div class="rpg-editor-field-item" data-index="${index}">
+                <div class="rpg-char-stat-reorder-controls">
+                    <button type="button" class="rpg-char-stat-move-up" data-index="${index}" ${index === 0 ? 'disabled' : ''}>↑ Move stat up</button>
+                    <button type="button" class="rpg-char-stat-move-down" data-index="${index}" ${index === charStats.length - 1 ? 'disabled' : ''}>↓ Move stat down</button>
+                </div>
                 <input type="checkbox" ${stat.enabled ? 'checked' : ''} class="rpg-char-stat-toggle" data-index="${index}" title="Show this stat">
                 <input type="text" value="${stat.name}" class="rpg-char-stat-label" data-index="${index}" placeholder="Stat Name (e.g., Health)">
                 <select class="rpg-char-stat-display-mode" data-index="${index}" title="How the stat is displayed">
@@ -1620,6 +1624,28 @@ function setupPresentCharactersListeners() {
     });
 
     // Toggle character stat
+    $('.rpg-char-stat-move-up').off('click').on('click', function (event) {
+        event.preventDefault();
+        const stats = extensionSettings.trackerConfig.presentCharacters.characterStats?.customStats;
+        const index = Number($(this).data('index'));
+        if (!Array.isArray(stats) || !Number.isInteger(index) || index <= 0 || index >= stats.length) return;
+
+        [stats[index - 1], stats[index]] = [stats[index], stats[index - 1]];
+        saveSettings();
+        renderPresentCharactersTab();
+    });
+
+    $('.rpg-char-stat-move-down').off('click').on('click', function (event) {
+        event.preventDefault();
+        const stats = extensionSettings.trackerConfig.presentCharacters.characterStats?.customStats;
+        const index = Number($(this).data('index'));
+        if (!Array.isArray(stats) || !Number.isInteger(index) || index < 0 || index >= stats.length - 1) return;
+
+        [stats[index], stats[index + 1]] = [stats[index + 1], stats[index]];
+        saveSettings();
+        renderPresentCharactersTab();
+    });
+
     $('.rpg-char-stat-toggle').off('change').on('change', function () {
         const index = $(this).data('index');
         extensionSettings.trackerConfig.presentCharacters.characterStats.customStats[index].enabled = $(this).is(':checked');
