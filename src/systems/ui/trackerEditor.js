@@ -1337,10 +1337,6 @@ function renderPresentCharactersTab() {
     charStats.forEach((stat, index) => {
         html += `
             <div class="rpg-editor-field-item" data-index="${index}">
-                <div class="rpg-field-controls rpg-char-stat-controls">
-                    <button class="rpg-char-stat-move-up" data-index="${index}" ${index === 0 ? 'disabled' : ''} title="Move up"><i class="fa-solid fa-arrow-up"></i></button>
-                    <button class="rpg-char-stat-move-down" data-index="${index}" ${index === charStats.length - 1 ? 'disabled' : ''} title="Move down"><i class="fa-solid fa-arrow-down"></i></button>
-                </div>
                 <input type="checkbox" ${stat.enabled ? 'checked' : ''} class="rpg-char-stat-toggle" data-index="${index}" title="Show this stat">
                 <input type="text" value="${stat.name}" class="rpg-char-stat-label" data-index="${index}" placeholder="Stat Name (e.g., Health)">
                 <select class="rpg-char-stat-display-mode" data-index="${index}" title="How the stat is displayed">
@@ -1581,31 +1577,6 @@ function setupPresentCharactersListeners() {
     $('.rpg-field-placeholder').off('blur').on('blur', function () {
         const index = $(this).data('index');
         extensionSettings.trackerConfig.presentCharacters.customFields[index].description = $(this).val();
-    });
-
-    // Move character stat up/down
-    $('.rpg-char-stat-move-up').off('click').on('click', function (event) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-
-        const stats = extensionSettings.trackerConfig.presentCharacters.characterStats?.customStats;
-        const index = Number($(this).data('index'));
-        if (!Array.isArray(stats) || !Number.isInteger(index) || index <= 0 || index >= stats.length) return;
-
-        [stats[index - 1], stats[index]] = [stats[index], stats[index - 1]];
-        renderPresentCharactersTab();
-    });
-
-    $('.rpg-char-stat-move-down').off('click').on('click', function (event) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-
-        const stats = extensionSettings.trackerConfig.presentCharacters.characterStats?.customStats;
-        const index = Number($(this).data('index'));
-        if (!Array.isArray(stats) || !Number.isInteger(index) || index < 0 || index >= stats.length - 1) return;
-
-        [stats[index], stats[index + 1]] = [stats[index + 1], stats[index]];
-        renderPresentCharactersTab();
     });
 
     // Character stats toggle
