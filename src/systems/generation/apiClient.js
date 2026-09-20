@@ -3,7 +3,7 @@
  * Handles API calls for RPG tracker generation
  */
 
-import { chat, eventSource } from '../../../../../../../script.js';
+import { chat, eventSource, getRequestHeaders } from '../../../../../../../script.js';
 import { executeSlashCommandsOnChatInput } from '../../../../../../../scripts/slash-commands.js';
 import { safeGenerateRaw, extractTextFromResponse } from '../../utils/responseExtractor.js';
 
@@ -51,11 +51,11 @@ let originalPresetName = null;
  * @throws {Error} If the API call fails or configuration is invalid
  */
 export async function generateWithExternalAPI(messages) {
-    const { baseUrl, model, maxTokens, temperature } = extensionSettings.externalApiSettings || {};
-    // Retrieve API key from secure storage (not shared extension settings)
+    const { baseUrl, model, maxTokens, temperature, useSillyTavernProxy } = extensionSettings.externalApiSettings || {};
+    // Direct browser calls are kept for CORS-enabled providers. For providers such as
+    // NVIDIA NIM, SillyTavern's backend proxy avoids browser CORS restrictions.
     const apiKey = localStorage.getItem('rpg_companion_external_api_key');
 
-    // Validate required settings
     if (!baseUrl || !baseUrl.trim()) {
         throw new Error('External API base URL is not configured');
     }
@@ -63,32 +63,46 @@ export async function generateWithExternalAPI(messages) {
         throw new Error('External API model is not configured');
     }
 
-    // Normalize base URL (remove trailing slash if present)
-    const normalizedBaseUrl = baseUrl.trim().replace(/\/+$/, '');
-    const endpoint = `${normalizedBaseUrl}/chat/completions`;
-
-    // console.log(`[RPG Companion] Calling external API: ${normalizedBaseUrl} with model: ${model}`);
-
-    // Prepare headers - only include Authorization if API key is provided
-    const headers = {
-        'Content-Type': 'application/json'
+    const normalizedBaseUrl = baseUrl.trim().replace(/\\/+$/, '');
+    const payload = {
+        model: model.trim(),
+        messages,
+        max_tokens: maxTokens || 2048,
+        temperature: temperature ?? 0.7
     };
 
-    if (apiKey && apiKey.trim()) {
-        headers['Authorization'] = `Bearer ${apiKey.trim()}`;
-    }
-
     try {
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify({
-                model: model.trim(),
-                messages: messages,
-                max_tokens: maxTokens || 2048,
-                temperature: temperature ?? 0.7
-            })
-        });
+        let response;
+
+        if (useSillyTavernProxy) {
+            // SillyTavern performs the outbound request server-side, so the provider
+            // never needs to expose CORS headers to the browser. The API key is read
+            // from SillyTavern's Custom API secret store.
+            response = await fetch('/api/backends/chat-completions/generate', {
+                method: 'POST',
+                headers: getRequestHeaders(),
+                cache: 'no-cache',
+                body: JSON.stringify({
+                    ...payload,
+                    chat_completion_source: 'custom',
+                    custom_url: normalizedBaseUrl
+                })
+            });
+        } else {
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+
+            if (apiKey && apiKey.trim()) {
+                headers['Authorization'] = `Bearer ${apiKey.trim()}`;
+            }
+
+            response = await fetch(`${normalizedBaseUrl}/chat/completions`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(payload)
+            });
+        }
 
         if (!response.ok) {
             const errorText = await response.text();
@@ -99,8 +113,7 @@ export async function generateWithExternalAPI(messages) {
                     errorMessage = `External API error: ${errorJson.error.message}`;
                 }
             } catch (e) {
-                // If parsing fails, use the raw text if it's short enough
-                if (errorText.length < 200) {
+                if (errorText.length < 300) {
                     errorMessage = `External API error: ${errorText}`;
                 }
             }
@@ -108,17 +121,17 @@ export async function generateWithExternalAPI(messages) {
         }
 
         const data = await response.json();
-
         const content = extractTextFromResponse(data);
+
         if (!content || !content.trim()) {
             throw new Error('Invalid response format from external API — no text content found');
         }
-        // console.log('[RPG Companion] External API response received successfully');
 
         return content;
     } catch (error) {
-        if (error.name === 'TypeError' && (error.message.includes('fetch') || error.message.includes('Failed to fetch') || error.message.includes('NetworkError'))) {
-            throw new Error(`CORS Access Blocked: This API endpoint (${normalizedBaseUrl}) does not allow direct access from a browser. This is a browser security restriction (CORS), not a bug in the extension. Please use an endpoint that supports CORS (like OpenRouter or a local proxy) or use SillyTavern's internal API system (Separate Mode).`);
+        if (!useSillyTavernProxy && error.name === 'TypeError' &&
+            (error.message.includes('fetch') || error.message.includes('Failed to fetch') || error.message.includes('NetworkError'))) {
+            throw new Error(`CORS Access Blocked: ${normalizedBaseUrl} does not allow direct browser access. Enable "Use SillyTavern backend proxy" in RPG Companion's External API settings and configure SillyTavern's Custom API URL/key. This routes the request through SillyTavern and avoids browser CORS restrictions.`);
         }
         throw error;
     }
