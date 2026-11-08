@@ -1338,8 +1338,8 @@ function renderPresentCharactersTab() {
         html += `
             <div class="rpg-editor-field-item" data-index="${index}">
                 <div class="rpg-char-stat-reorder-controls">
-                    <button type="button" class="rpg-char-stat-move-up" data-index="${index}" ${index === 0 ? 'disabled' : ''}>↑ Move stat up</button>
-                    <button type="button" class="rpg-char-stat-move-down" data-index="${index}" ${index === charStats.length - 1 ? 'disabled' : ''}>↓ Move stat down</button>
+                    <button type="button" class="rpg-char-stat-move-up" data-index="${index}" ${index === 0 ? 'disabled' : ''} title="Move stat up" aria-label="Move stat up"><i class="fa-solid fa-chevron-up"></i></button>
+                    <button type="button" class="rpg-char-stat-move-down" data-index="${index}" ${index === charStats.length - 1 ? 'disabled' : ''} title="Move stat down" aria-label="Move stat down"><i class="fa-solid fa-chevron-down"></i></button>
                 </div>
                 <input type="checkbox" ${stat.enabled ? 'checked' : ''} class="rpg-char-stat-toggle" data-index="${index}" title="Show this stat">
                 <input type="text" value="${stat.name}" class="rpg-char-stat-label" data-index="${index}" placeholder="Stat Name (e.g., Health)">
